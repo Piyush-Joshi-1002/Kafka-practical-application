@@ -11,6 +11,7 @@ public class AutoCreateConfig {
 
     @Value("${spring.kafka.topic}")
     private  String topic;
+
     @Bean
     public NewTopic libraryEvents(){
         return TopicBuilder
