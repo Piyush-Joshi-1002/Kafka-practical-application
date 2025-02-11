@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.learnKafka.library_events_producer.domain.LibraryEvent;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
@@ -33,7 +34,7 @@ public class LibraryEventsProducer {
 
 
 
-
+    //Async Approach (preferable)
     public CompletableFuture<SendResult<Integer, String>> sendLibraryEvent(LibraryEvent libraryEvent) throws JsonProcessingException {
         var key = libraryEvent.libraryEventId();
         var value =objectMapper.writeValueAsString(libraryEvent);
@@ -52,6 +53,8 @@ public class LibraryEventsProducer {
                     }
                 }));
     }
+
+    //sync Approach
     public SendResult<Integer, String> sendLibraryEvent_SyncApproach(LibraryEvent libraryEvent) throws JsonProcessingException, ExecutionException, InterruptedException, TimeoutException {
         var key = libraryEvent.libraryEventId();
         var value =objectMapper.writeValueAsString(libraryEvent);
@@ -65,6 +68,34 @@ public class LibraryEventsProducer {
         handleSuccess(key,value,sendResult);
         return sendResult;
     }
+
+
+    //Async Approach without sending key, value directly.
+    public CompletableFuture<SendResult<Integer, String>> sendLibraryEvent_WithObject(LibraryEvent libraryEvent) throws JsonProcessingException {
+        var key = libraryEvent.libraryEventId();
+        var value =objectMapper.writeValueAsString(libraryEvent);
+
+        var producerRecord = buildProducerRecord(key,value);
+        // 1. blocking call - get metadata about the kafka cluster (very first time)
+        // 2. send message happens - returns a CompletableFuture.
+
+        var completableFuture = kafkaTemplate.send(producerRecord);
+        return completableFuture
+                .whenComplete(((sendResult, throwable) -> {
+                    if(throwable != null){
+                        handleFaliure(key,value,throwable);
+                    }
+                    else{
+                        handleSuccess(key,value,sendResult);
+                    }
+                }));
+    }
+
+    private ProducerRecord<Integer, String> buildProducerRecord(Integer key, String value) {
+
+        return new ProducerRecord<>(topic,key,value);
+    }
+
 
     private void handleSuccess(Integer key, String value, SendResult<Integer, String> sendResult) {
         log.info("Message Sent Successfully for the key : {} and the value : {} , partition is {}",
