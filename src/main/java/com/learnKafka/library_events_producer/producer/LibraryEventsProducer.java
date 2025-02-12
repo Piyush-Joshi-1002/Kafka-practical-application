@@ -6,11 +6,14 @@ import com.learnKafka.library_events_producer.domain.LibraryEvent;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.header.Header;
+import org.apache.kafka.common.header.internals.RecordHeader;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -75,7 +78,7 @@ public class LibraryEventsProducer {
         var key = libraryEvent.libraryEventId();
         var value =objectMapper.writeValueAsString(libraryEvent);
 
-        var producerRecord = buildProducerRecord(key,value);
+        var producerRecord = buildProducerRecordWithHeader(key,value);
         // 1. blocking call - get metadata about the kafka cluster (very first time)
         // 2. send message happens - returns a CompletableFuture.
 
@@ -94,6 +97,12 @@ public class LibraryEventsProducer {
     private ProducerRecord<Integer, String> buildProducerRecord(Integer key, String value) {
 
         return new ProducerRecord<>(topic,key,value);
+    }
+
+    //with header
+    private ProducerRecord<Integer, String> buildProducerRecordWithHeader(Integer key, String value) {
+        List<Header> recordHeader = List.of(new RecordHeader("event-source","scanner".getBytes()));
+        return new ProducerRecord<>(topic,null,key,value,recordHeader);
     }
 
 
