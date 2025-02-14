@@ -1,7 +1,7 @@
-package com.learnKafka.library_events_producer.Controller;
+package com.learnKafka.library_events_producer.intg.Controller;
 
 import com.learnKafka.library_events_producer.domain.LibraryEvent;
-import com.learnKafka.library_events_producer.util.TestUtil;
+import com.learnKafka.library_events_producer.intg.util.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
