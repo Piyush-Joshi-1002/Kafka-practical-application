@@ -1,12 +1,9 @@
-package com.learnKafka.library_events_producer.unit;
+package com.learnKafka.library_events_producer.controller;
 
-import com.learnKafka.library_events_producer.domain.LibraryEvent;
-import com.learnKafka.library_events_producer.intg.util.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
