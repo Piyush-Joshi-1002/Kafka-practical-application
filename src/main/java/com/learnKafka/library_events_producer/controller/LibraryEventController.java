@@ -32,7 +32,8 @@ public class LibraryEventController {
 
         log.info("libraryEvent: {}",libraryEvent);
 
-        libraryEventsProducer.sendLibraryEvent_SyncApproach(libraryEvent);
+        //libraryEventsProducer.sendLibraryEvent_SyncApproach(libraryEvent);
+        libraryEventsProducer.sendLibraryEvent_WithObject(libraryEvent);
 
         log.info("After sending libraryEvent : ");
 
