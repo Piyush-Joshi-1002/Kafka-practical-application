@@ -1,4 +1,4 @@
-package com.learnKafka.library_events_producer.unit;
+package com.learnKafka.library_events_producer.controller;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -32,6 +32,7 @@ public class LibraryEventController {
 
         log.info("libraryEvent: {}",libraryEvent);
 
+        //libraryEventsProducer.sendLibraryEvent_SyncApproach(libraryEvent);
         libraryEventsProducer.sendLibraryEvent_WithObject(libraryEvent);
 
         log.info("After sending libraryEvent : ");
