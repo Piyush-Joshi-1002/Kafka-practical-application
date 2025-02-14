@@ -1,4 +1,4 @@
-package com.learnKafka.library_events_producer.util;
+package com.learnKafka.library_events_producer.intg.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
