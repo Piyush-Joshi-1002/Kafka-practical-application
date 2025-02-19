@@ -77,4 +77,51 @@ class LibraryEventControllerTest {
                 .andExpect(content().string(expectedErrorMessage));
     }
 
+    @Test
+    void putLibraryEvent() throws Exception {
+        var json = objectMapper.writeValueAsString(TestUtil.libraryEventRecord_update());
+
+        when(libraryEventsProducer.sendLibraryEvent_WithObject(isA(LibraryEvent.class)))
+                .thenReturn(null);
+
+        mockMvc
+                .perform(MockMvcRequestBuilders.put("/v1/libraryevent")
+                        .content(json)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+    }
+
+    // unhappy cases
+
+
+    @Test
+    void putLibraryEventInvalidId() throws Exception {
+        var json = objectMapper.writeValueAsString(TestUtil.invalid_Id_LibraryEventRecord_update());
+
+        when(libraryEventsProducer.sendLibraryEvent_WithObject(isA(LibraryEvent.class)))
+                .thenReturn(null);
+
+        mockMvc
+                .perform(MockMvcRequestBuilders.put("/v1/libraryevent")
+                        .content(json)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().string("Id can not be null"));
+    }
+
+    @Test
+    void putLibraryEventInvalidEventType() throws Exception {
+        var json = objectMapper.writeValueAsString(TestUtil.invalid_EventType_libraryEventRecord_update_());
+
+        when(libraryEventsProducer.sendLibraryEvent_WithObject(isA(LibraryEvent.class)))
+                .thenReturn(null);
+
+        mockMvc
+                .perform(MockMvcRequestBuilders.put("/v1/libraryevent")
+                        .content(json)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().string("Library Event Type is not update, only Update event type is supported "));
+    }
 }
