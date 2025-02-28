@@ -1,10 +1,11 @@
 package com.learnKafka.library_events_producer.producer;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.learnKafka.library_events_producer.domain.LibraryEvent;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
@@ -13,11 +14,11 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.learnKafka.library_events_producer.domain.LibraryEvent;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
@@ -79,7 +80,9 @@ public class LibraryEventsProducer {
         var value =objectMapper.writeValueAsString(libraryEvent);
 
         var producerRecord = buildProducerRecordWithHeader(key,value);
-        // 1. blocking call - get metadata about the kafka cluster (very first time)
+        // 1. blocking call - get metadata about the kafka cluster (very first time) => max.block.ms (By default 60 seconds)
+        /* if all broker are down then we have (max.block.ms:60000 [60Second] ) propertie whcih determine after how much time
+        *    blocking call  will release */
         // 2. send message happens - returns a CompletableFuture.
 
         var completableFuture = kafkaTemplate.send(producerRecord);
